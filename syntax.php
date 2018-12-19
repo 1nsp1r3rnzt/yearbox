@@ -73,6 +73,7 @@ class syntax_plugin_yearbox extends DokuWiki_Syntax_Plugin
         $opt['months'] = [];               // months to be displayed (csv list), e.g. 1,2,3,4... 1=Sun
         $opt['weekdays'] = [];             // weekdays which should have links (csv links)... 1=Jan
         $opt['align'] = '';                // default is centred
+        $opt['template'] = '';                // default is centred
 
         $match = substr($match, 10, -2);
         $args = explode(';', $match);
@@ -91,6 +92,9 @@ class syntax_plugin_yearbox extends DokuWiki_Syntax_Plugin
                     break;
                 case 'ns':
                     $opt['ns'] = (strpos($value, ':') === false) ? ':' . $value : $value;
+                    break;
+                case 'template':
+                    $opt['template'] = (strpos($value, ':') === false) ? ':' . $value : $value;
                     break;
                 case 'recent':
                     $opt['recent'] = ($value > 0) ? abs($value) : 0;
@@ -273,8 +277,17 @@ class syntax_plugin_yearbox extends DokuWiki_Syntax_Plugin
             $link = html_wikilink($id, $day_fmt);
             // skip the "do you want to create this page" bit
             $sym = ($conf['userewrite']) ? '?' : '&amp;';
-            $link = preg_replace('/\" class/', $sym . 'do=edit" class', $link, 1);
-        }
+
+            
+            if(isset( $opt['template']))
+            {
+                
+                $new_page_template =  '&newpagetemplate='.$opt['template'];
+            }
+
+            $link = preg_replace('/\" class/', $sym . 'do=edit'.$new_page_template.'" class', $link, 1);
+           
+                    }
         return '<td' . $day_css . '>' . $link . '</td>';
     }
 
